@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">لوکاسوآپ</string>
+
+    <!-- Location -->
+    <string name="current_location">موقعیت فعلی</string>
+    <string name="latitude">عرض جغرافیایی</string>
+    <string name="longitude">طول جغرافیایی</string>
+    <string name="speed">سرعت</string>
+    <string name="loading">در حال بارگذاری...</string>
+    <string name="error_location">موقعیت در دسترس نیست. GPS یا Mock Location را فعال کنید.</string>
+
+    <!-- Buttons -->
+    <string name="change_location">تغییر موقعیت</string>
+    <string name="show_map">نمایش نقشه</string>
+    <string name="hide_map">پنهان کردن نقشه</string>
+    <string name="add_move">اضافه / جابجایی</string>
+    <string name="start_process">شروع فرایند</string>
+    <string name="stop_process">توقف فرایند</string>
+
+    <!-- Info -->
+    <string name="help">راهنما</string>
+    <string name="about">درباره ما</string>
+    <string name="rules">قوانین و سیاست‌ها</string>
+
+    <!-- Language -->
+    <string name="language">زبان</string>
+
+    <!-- About Page Content -->
+    <string name="about_content">
+        <![CDATA[
+        <b>لوکاسوآپ</b> یک اپلیکیشن تک‌صفحه‌ای اندروید است که توسط <b>علی تقی‌پور</b> توسعه داده شده است.<br/><br/>
+        هدف این پروژه فراهم کردن <b>ابزاری ساده و امن برای ردیابی موقعیت، نمایش روی نقشه و مدیریت فرایندها</b> است.<br/><br/>
+        • توسعه‌دهنده: علی تقی‌پور<br/>
+        • وبسایت / اطلاعات تماس: <a href="https://alitagipour.ir">alitagipour.ir</a><br/>
+        • زبان: جاوا<br/>
+        • IDE: اندروید استودیو<br/>
+        • Open Source: این پروژه <b>عمومی / منبع‌باز</b> است و هر کسی می‌تواند استفاده، بررسی و مشارکت داشته باشد.<br/><br/>
+        <b>توجه:</b> این اپلیکیشن صرفاً یک پروژه آموزشی و نمونه است و برای مقاصد یادگیری توسعه یافته است. هیچگونه مسئولیت قانونی برای استفاده نادرست یا داده‌های شخصی کاربران بر عهده سازنده نیست.
+        ]]>
+    </string>
+
+    <!-- Rules Page Content -->
+    <string name="rules_content">
+        <![CDATA[
+        <b>۱. منبع‌باز:</b><br/>
+        این پروژه تحت <b>مجوز MIT</b> است و هر کسی می‌تواند از آن استفاده، اصلاح یا اشتراک‌گذاری کند.<br/><br/>
+
+        <b>۲. عدم مسئولیت:</b><br/>
+        سازنده هیچگونه مسئولیتی در قبال استفاده نادرست، خطاها، یا از دست رفتن داده‌ها ندارد. این برنامه صرفاً برای <b>آموزش و نمونه‌سازی</b> ارائه شده است.<br/><br/>
+
+        <b>۳. رعایت قوانین:</b><br/>
+        کاربران موظف هستند از این برنامه در چهارچوب <b>قوانین ایران و قوانین بین‌المللی</b> استفاده کنند. هرگونه سوءاستفاده از اپلیکیشن ممنوع است.<br/><br/>
+
+        <b>۴. امنیت و داده‌ها:</b><br/>
+        این پروژه هیچ داده حساسی را ذخیره نمی‌کند و تمام اطلاعات موقعیت فقط برای نمایش در اپلیکیشن استفاده می‌شوند.<br/>
+        هیچ اتصال به سرور خارجی بدون اطلاع کاربر صورت نمی‌گیرد.
+        ]]>
+    </string>
+
+    <!-- Help Page Content -->
+    <string name="help_content">
+        <![CDATA[
+        برای تست موقعیت در <b>Developer Options</b> اندروید:<br/><br/>
+        ۱. وارد <b>Settings → About Phone → Build Number</b> شوید و چند بار روی Build Number کلیک کنید تا <b>Developer Mode</b> فعال شود.<br/>
+        ۲. به <b>Settings → Developer Options</b> بروید.<br/>
+        ۳. گزینه <b>Allow Mock Locations</b> را فعال کنید.<br/>
+        ۴. از منوی <b>Mock Location App</b> برنامه <b>لوکاسوآپ</b> را انتخاب کنید.<br/>
+        ۵. حالا می‌توانید موقعیت را به صورت جعلی در اپلیکیشن تست کنید.<br/><br/>
+        <b>نکته:</b> این قابلیت فقط برای <b>تست و توسعه</b> استفاده شود و در استفاده واقعی نباید داده‌ها دستکاری شوند.
+        ]]>
+    </string>
+
+</resources>

@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">LukaSwap</string>
+
+    <!-- Location -->
+    <string name="current_location">Current Location</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="speed">Speed</string>
+    <string name="loading">Loading...</string>
+    <string name="error_location">Unable to get location. Check GPS or Mock Location.</string>
+
+    <!-- Buttons -->
+    <string name="change_location">Change Location</string>
+    <string name="show_map">Show Map</string>
+    <string name="hide_map">Hide Map</string>
+    <string name="add_move">Add Location / Move</string>
+    <string name="start_process">Start Process</string>
+    <string name="stop_process">Stop Process</string>
+
+    <!-- Info -->
+    <string name="help">Help</string>
+    <string name="about">About</string>
+    <string name="rules">Rules &amp; Policy</string>
+
+    <!-- Language -->
+    <string name="language">Language</string>
+
+    <!-- About Page Content -->
+    <string name="about_content">
+        <![CDATA[
+        <b>LukaSwap</b> is a single-page Android application developed by <b>Ali Tagipour</b>.<br/><br/>
+        The purpose of this project is to provide a <b>simple and secure tool for location tracking, map visualization, and process management</b>.<br/><br/>
+        • Developer: Ali Tagipour<br/>
+        • Website / Contact: <a href="https://alitagipour.ir">alitagipour.ir</a><br/>
+        • Language: Java<br/>
+        • IDE: Android Studio<br/>
+        • Open Source: This project is <b>Public / Open Source</b>, and anyone can use, review, or contribute.<br/><br/>
+        <b>Note:</b> This application is strictly an educational/sample project and is intended for learning and experimentation. The developer is not responsible for misuse or any data loss.
+        ]]>
+    </string>
+
+    <!-- Rules Page Content -->
+    <string name="rules_content">
+        <![CDATA[
+        <b>1. Open Source:</b><br/>
+        This project is licensed under the <b>MIT License</b>. Anyone may use, modify, or share it.<br/><br/>
+
+        <b>2. No Liability:</b><br/>
+        The developer is not responsible for misuse, errors, or data loss. This app is provided <b>for educational and demonstration purposes only</b>.<br/><br/>
+
+        <b>3. Legal Compliance:</b><br/>
+        Users must use this application in accordance with <b>Iranian law and international regulations</b>. Any misuse is prohibited.<br/><br/>
+
+        <b>4. Security &amp; Data:</b><br/>
+        This project does not store sensitive information. All location data is used solely for display in the app.<br/>
+        No external server communication occurs without user consent.
+        ]]>
+    </string>
+
+    <!-- Help Page Content -->
+    <string name="help_content">
+        <![CDATA[
+        To test location in <b>Android Developer Options</b>:<br/><br/>
+        1. Go to <b>Settings → About Phone → Build Number</b> and tap Build Number multiple times to enable <b>Developer Mode</b>.<br/>
+        2. Open <b>Settings → Developer Options</b>.<br/>
+        3. Enable <b>Allow Mock Locations</b>.<br/>
+        4. Select <b>LukaSwap</b> as the <b>Mock Location App</b>.<br/>
+        5. You can now test fake locations in the app.<br/><br/>
+        <b>Note:</b> This feature is intended for <b>testing and development only</b>. Do not manipulate real user data.
+        ]]>
+    </string>
+
+</resources>
