@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- رنگ‌های اصلی تم -->
+    <color name="blue_primary">#1976D2</color>      <!-- رنگ اصلی (Primary) -->
+    <color name="blue_dark">#1565C0</color>         <!-- رنگ تیره‌تر (Primary Dark) -->
+    <color name="white">#FFFFFF</color>             <!-- سفید -->
+
+    <!-- رنگ‌های استاندارد Material -->
     <color name="blue_500">#2196F3</color>
-    <color name="white">#FFFFFF</color>
     <color name="gray_200">#EEEEEE</color>
     <color name="red_500">#F44336</color>
+
+    <!-- رنگ‌های اضافی (اختیاری) -->
+    <color name="black">#212121</color>
+    <color name="gray_500">#9E9E9E</color>
+    <color name="green_500">#4CAF50</color>
+
 </resources>

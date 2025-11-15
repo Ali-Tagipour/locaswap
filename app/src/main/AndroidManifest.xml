@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ir.at.locaswap">
 
-    <!-- مجوزهای موقعیت -->
+    <!-- مجوزها -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LocaSwap">
 
-        <!-- Splash Screen -->
+        <!-- Splash -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -26,14 +26,14 @@
             </intent-filter>
         </activity>
 
-        <!-- Main Activity -->
+        <!-- Main -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:configChanges="locale|layoutDirection|screenSize|orientation"
             android:screenOrientation="portrait" />
 
-        <!-- Info Activities -->
+        <!-- Info Pages -->
         <activity
             android:name=".HelpActivity"
             android:exported="false"
@@ -48,6 +48,13 @@
 
         <activity
             android:name=".RulesActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
+
+        <!-- Map Activity -->
+        <activity
+            android:name=".MapActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait" />

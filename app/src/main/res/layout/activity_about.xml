@@ -7,22 +7,24 @@
     android:background="#FFFFFF"
     android:fitsSystemWindows="true">
 
+    <!-- تولبار -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ToolbarTheme"> <!-- درست شد -->
+        android:theme="@style/ToolbarTheme">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            app:title="@string/about"
             app:titleTextColor="#FFFFFF"
-            app:navigationIcon="?attr/homeAsUpIndicator"
-            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
+            app:navigationIcon="?attr/homeAsUpIndicator" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- محتوا -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,11 +36,14 @@
             android:id="@+id/tv_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/about_content"
             android:textSize="16sp"
             android:lineSpacingExtra="10dp"
             android:textColor="#212121"
-            android:autoLink="web"
-            android:textColorLink="#1976D2"/>
+            android:autoLink="web|email"
+            android:textColorLink="#1976D2"
+            android:fontFamily="sans-serif-medium"
+            android:textIsSelectable="true" />
 
     </androidx.core.widget.NestedScrollView>
 

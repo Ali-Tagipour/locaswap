@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0"
+    android:toDegrees="360"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:duration="30000"
+    android:repeatCount="infinite"
+    android:interpolator="@android:anim/linear_interpolator">
+
+    <!-- لایه گرادیان با سایه و افکت شیشه‌ای (Glassmorphism) -->
+    <layer-list>
+
+        <!-- پس‌زمینه اصلی با گرادیان نرم -->
+        <item>
+            <shape android:shape="rectangle">
+                <gradient
+                    android:startColor="#E3F2FD"
+                    android:centerColor="#BBDEFB"
+                    android:endColor="#90CAF9"
+                    android:angle="135"
+                    android:type="linear" />
+                <corners android:radius="0dp" />
+            </shape>
+        </item>
+
+        <!-- لایه شفاف برای افکت حرکت (مثل Location Changer) -->
+        <item
+            android:left="40dp"
+            android:top="40dp"
+            android:right="40dp"
+            android:bottom="40dp">
+            <rotate
+                android:fromDegrees="-45"
+                android:toDegrees="45"
+                android:pivotX="50%"
+                android:pivotY="50%">
+                <shape android:shape="oval">
+                    <stroke
+                        android:width="2dp"
+                        android:color="#80FFFFFF" />
+                </shape>
+            </rotate>
+        </item>
+
+        <!-- نقطه مرکزی در حال چرخش (مثل رادار) -->
+        <item
+            android:left="50dp"
+            android:top="50dp"
+            android:right="50dp"
+            android:bottom="50dp">
+            <shape android:shape="oval">
+                <size
+                    android:width="8dp"
+                    android:height="8dp" />
+                <solid android:color="#1976D2" />
+                <stroke
+                    android:width="2dp"
+                    android:color="#FFFFFF" />
+            </shape>
+        </item>
+
+    </layer-list>
+</animated-rotate>

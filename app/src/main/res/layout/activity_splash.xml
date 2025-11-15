@@ -11,7 +11,7 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_centerInParent="true"
-        android:src="@drawable/locaswap"
+        android:src="@drawable/lss"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:contentDescription="@string/app_name"
