@@ -2,64 +2,32 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ir.at.locaswap">
 
-    <!-- مجوزها -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LocaSwap">
 
-        <!-- Splash -->
-        <activity
-            android:name=".SplashActivity"
+        <activity android:name=".SplashActivity"
             android:exported="true"
-            android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Main -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:configChanges="locale|layoutDirection|screenSize|orientation"
-            android:screenOrientation="portrait" />
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".MapActivity" android:exported="false" />
+        <activity android:name=".AboutActivity" android:exported="false" />
+        <activity android:name=".HelpActivity" android:exported="false" />
+        <activity android:name=".RulesActivity" android:exported="false" />
 
-        <!-- Info Pages -->
-        <activity
-            android:name=".HelpActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".AboutActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".RulesActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait" />
-
-        <!-- Map Activity -->
-        <activity
-            android:name=".MapActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait" />
-
-        <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="YOUR_GOOGLE_MAPS_API_KEY" />

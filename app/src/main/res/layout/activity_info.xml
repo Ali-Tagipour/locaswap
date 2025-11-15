@@ -10,7 +10,7 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ToolbarTheme"> <!-- درست شد -->
+        android:theme="@style/ToolbarTheme">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -37,8 +37,10 @@
             android:textSize="16sp"
             android:lineSpacingExtra="10dp"
             android:textColor="#212121"
-            android:autoLink="web"
-            android:textColorLink="#1976D2"/>
+            android:autoLink="web|email"
+            android:textColorLink="#1976D2"
+            android:fontFamily="sans-serif-medium"
+            android:textIsSelectable="true" />
 
     </androidx.core.widget.NestedScrollView>
 

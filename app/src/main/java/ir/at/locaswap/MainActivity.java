@@ -1,144 +1,226 @@
 package ir.at.locaswap;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Locale;
+import java.io.IOException;
+import java.util.*;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private static final int LOCATION_PERMISSION_CODE = 100;
     private FusedLocationProviderClient fusedLocationClient;
-    private TextView tvLatitude, tvLongitude, tvSpeed, tvError;
-    private Button btnProcess, btnShowMap, btnLanguage, btnAddLocation;
+    private TextView tvCurrent, tvTarget, tvAccuracy, tvAltitude, tvSpeed, tvCurrentAddress, tvTargetAddress;
+    private Button btnSaveLocation, btnMap, btnStart;
+    private FloatingActionButton fabMenu;
+    private ImageView radarView;
     private boolean isProcessRunning = false;
     private LocationManager locationManager;
     private SharedPreferences prefs;
-    private double mockLat = 0;
-    private double mockLng = 0;
+    private double mockLat = 0, mockLng = 0;
+    private double currentLat = 0, currentLng = 0;
+    private SensorManager sensorManager;
+    private Sensor pressureSensor;
+
+    private final ActivityResultLauncher<Intent> mapLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    mockLat = result.getData().getDoubleExtra("lat", 0);
+                    mockLng = result.getData().getDoubleExtra("lng", 0);
+                    updateTargetLocation();
+                    saveLocation(mockLat, mockLng);
+                    getAddress(mockLat, mockLng, tvTargetAddress);
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
         initViews();
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        initServices();
+        loadLastTarget();
         requestLocationPermission();
         setupButtons();
-
-        // بازگردانی مختصات ذخیره‌شده
-        mockLat = Double.longBitsToDouble(prefs.getLong("mock_lat", 0));
-        mockLng = Double.longBitsToDouble(prefs.getLong("mock_lng", 0));
+        startRadarAnimation();
+        setupFabMenu();
     }
 
     private void initViews() {
-        tvLatitude = findViewById(R.id.tv_latitude);
-        tvLongitude = findViewById(R.id.tv_longitude);
+        tvCurrent = findViewById(R.id.tv_current);
+        tvTarget = findViewById(R.id.tv_target);
+        tvAccuracy = findViewById(R.id.tv_accuracy);
+        tvAltitude = findViewById(R.id.tv_altitude);
         tvSpeed = findViewById(R.id.tv_speed);
-        tvError = findViewById(R.id.tv_error);
-        btnProcess = findViewById(R.id.btn_process);
-        btnShowMap = findViewById(R.id.btn_show_map);
-        btnLanguage = findViewById(R.id.btn_language);
-        btnAddLocation = findViewById(R.id.btn_add_move);
+        tvCurrentAddress = findViewById(R.id.tv_current_address);
+        tvTargetAddress = findViewById(R.id.tv_target_address);
+        btnSaveLocation = findViewById(R.id.btn_save_location);
+        btnMap = findViewById(R.id.btn_map);
+        btnStart = findViewById(R.id.btn_start);
+        fabMenu = findViewById(R.id.fab_menu);
+        radarView = findViewById(R.id.radar_view);
+    }
+
+    private void initServices() {
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     private void setupButtons() {
-        btnAddLocation.setOnClickListener(v -> showLocationDialog());
-
-        btnProcess.setOnClickListener(v -> toggleProcess());
-
-        btnLanguage.setOnClickListener(v -> toggleLanguage());
+        btnSaveLocation.setOnClickListener(v -> showPasteDialog());
+        btnMap.setOnClickListener(v -> openMap());
+        btnStart.setOnClickListener(v -> toggleMock());
     }
 
-    private void showLocationDialog() {
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_location, null);
-        EditText etLat = dialogView.findViewById(R.id.et_lat);
-        EditText etLng = dialogView.findViewById(R.id.et_lng);
+    private void setupFabMenu() {
+        fabMenu.setOnClickListener(v -> showFabMenu());
+    }
 
-        // نمایش مختصات فعلی
-        etLat.setText(String.valueOf(mockLat));
-        etLng.setText(String.valueOf(mockLng));
+    private void showFabMenu() {
+        PopupMenu popup = new PopupMenu(this, fabMenu);
+        popup.getMenuInflater().inflate(R.menu.menu_main, popup.getMenu());
+        popup.setOnMenuItemClickListener(this::onFabMenuItemClick);
+        popup.show();
+    }
+
+    private boolean onFabMenuItemClick(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_about) {
+            startActivity(new Intent(this, AboutActivity.class));
+        } else if (id == R.id.menu_policy) {
+            startActivity(new Intent(this, RulesActivity.class));
+        } else if (id == R.id.menu_help) {
+            startActivity(new Intent(this, HelpActivity.class));
+        }
+        return true;
+    }
+
+    private void showPasteDialog() {
+        View view = getLayoutInflater().inflate(R.layout.dialog_paste, null);
+        EditText etLat = view.findViewById(R.id.et_lat);
+        EditText etLng = view.findViewById(R.id.et_lng);
 
         new AlertDialog.Builder(this)
-                .setTitle("انتخاب مختصات")
-                .setView(dialogView)
-                .setPositiveButton("تأیید", (dialog, which) -> {
+                .setTitle("ذخیره لوکیشن")
+                .setView(view)
+                .setPositiveButton("ذخیره", (d, w) -> {
                     try {
-                        mockLat = Double.parseDouble(etLat.getText().toString());
-                        mockLng = Double.parseDouble(etLng.getText().toString());
-
-                        // ذخیره با longBitsToDouble
-                        prefs.edit()
-                                .putLong("mock_lat", Double.doubleToRawLongBits(mockLat))
-                                .putLong("mock_lng", Double.doubleToRawLongBits(mockLng))
-                                .apply();
-
-                        Toast.makeText(this, "مختصات ذخیره شد: " + mockLat + ", " + mockLng, Toast.LENGTH_SHORT).show();
+                        mockLat = Double.parseDouble(etLat.getText().toString().trim());
+                        mockLng = Double.parseDouble(etLng.getText().toString().trim());
+                        if (mockLat != 0 && mockLng != 0) {
+                            updateTargetLocation();
+                            saveLocation(mockLat, mockLng);
+                            getAddress(mockLat, mockLng, tvTargetAddress);
+                        }
                     } catch (Exception e) {
-                        Toast.makeText(this, "خطا در ورودی", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "فرمت اشتباه! مثال: 35.6892, 51.3890", Toast.LENGTH_LONG).show();
                     }
                 })
                 .setNegativeButton("لغو", null)
                 .show();
     }
 
-    private void toggleProcess() {
-        isProcessRunning = !isProcessRunning;
-        btnProcess.setText(isProcessRunning ? R.string.stop_process : R.string.start_process);
+    private void openMap() {
+        Intent intent = new Intent(this, MapActivity.class);
+        intent.putExtra("current_lat", currentLat);
+        intent.putExtra("current_lng", currentLng);
+        mapLauncher.launch(intent);
+    }
 
-        if (isProcessRunning) {
-            startMockLocation();
-        } else {
-            stopMockLocation();
-        }
+    private void saveLocation(double lat, double lng) {
+        String entry = String.format(Locale.US, "%.6f, %.6f", lat, lng);
+        Set<String> set = new HashSet<>(prefs.getStringSet("saved", new HashSet<>()));
+        set.add(entry);
+        prefs.edit().putStringSet("saved", set).apply();
+    }
+
+    private void loadLastTarget() {
+        mockLat = Double.longBitsToDouble(prefs.getLong("mock_lat", 0));
+        mockLng = Double.longBitsToDouble(prefs.getLong("mock_lng", 0));
+        if (mockLat != 0) updateTargetLocation();
+    }
+
+    private void updateTargetLocation() {
+        tvTarget.setText(String.format(Locale.US, "هدف: %.6f, %.6f", mockLat, mockLng));
+        prefs.edit()
+                .putLong("mock_lat", Double.doubleToRawLongBits(mockLat))
+                .putLong("mock_lng", Double.doubleToRawLongBits(mockLng))
+                .apply();
+    }
+
+    private void toggleMock() {
+        isProcessRunning = !isProcessRunning;
+        btnStart.setText(isProcessRunning ? "توقف" : "شروع");
+        if (isProcessRunning) startMockLocation();
+        else stopMockLocation();
+    }
+
+    // حل کامل ارور ProviderProperties
+    @RequiresApi(Build.VERSION_CODES.S)
+    private void addTestProviderNew() {
+        locationManager.addTestProvider(
+                LocationManager.GPS_PROVIDER,
+                false, false, false, false, true, true, true,
+                android.location.provider.ProviderProperties.POWER_USAGE_LOW,
+                android.location.provider.ProviderProperties.ACCURACY_FINE
+        );
+    }
+
+    private void addTestProviderOld() {
+        locationManager.addTestProvider(LocationManager.GPS_PROVIDER,
+                false, false, false, false, true, true, true, 1, 1);
     }
 
     private void startMockLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "اجازه دسترسی به مکان را بدهید", Toast.LENGTH_SHORT).show();
             return;
         }
 
         try {
-            // استفاده از پارامترهای boolean به جای ProviderProperties
-            locationManager.addTestProvider(
-                    LocationManager.GPS_PROVIDER,
-                    false,  // requiresNetwork
-                    false,  // requiresSatellite
-                    false,  // requiresCell
-                    false,  // hasMonetaryCost
-                    true,   // supportsAltitude
-                    true,   // supportsSpeed
-                    true,   // supportsBearing
-                    1,      // powerRequirement (1 = LOW, 2 = MEDIUM, 3 = HIGH)
-                    1       // accuracy (1 = FINE, 2 = COARSE)
-            );
+            // حل ارور: فقط در Android 12+ از ProviderProperties استفاده کن
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                addTestProviderNew();
+            } else {
+                addTestProviderOld();
+            }
 
             locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
 
@@ -147,46 +229,43 @@ public class MainActivity extends AppCompatActivity {
             mock.setLongitude(mockLng);
             mock.setAccuracy(5f);
             mock.setTime(System.currentTimeMillis());
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                mock.setElapsedRealtimeNanos(System.nanoTime());
-            }
+            if (Build.VERSION.SDK_INT >= 17) mock.setElapsedRealtimeNanos(System.nanoTime());
 
-            locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, mock);
-            Toast.makeText(this, "Mock Location فعال شد", Toast.LENGTH_SHORT).show();
+            new Thread(() -> {
+                while (isProcessRunning) {
+                    locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, mock);
+                    try { Thread.sleep(1000); } catch (Exception ignored) {}
+                }
+            }).start();
+
+            Toast.makeText(this, "موقعیت جعلی فعال شد!", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(this, "لطفاً Mock Location را در Developer Options فعال کنید", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Developer Options → Mock Location را فعال کنید", Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
         }
     }
 
     private void stopMockLocation() {
-        try {
-            locationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
-            Toast.makeText(this, "Mock Location متوقف شد", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        try { locationManager.removeTestProvider(LocationManager.GPS_PROVIDER); }
+        catch (Exception ignored) {}
     }
 
-    private void toggleLanguage() {
-        String currentLang = Locale.getDefault().getLanguage();
-        String newLang = "fa".equals(currentLang) ? "en" : "fa";
-        Locale locale = new Locale(newLang);
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.setLocale(locale);
-        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-        recreate();
+    private void startRadarAnimation() {
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 360f);
+        animator.setDuration(18000);
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+            radarView.setRotation(value);
+        });
+        animator.start();
     }
 
     private void requestLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    LOCATION_PERMISSION_CODE);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_CODE);
         } else {
-            getLocation();
+            getCurrentLocation();
         }
     }
 
@@ -194,32 +273,68 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            getLocation();
-        } else {
-            showError(getString(R.string.error_location));
+            getCurrentLocation();
         }
     }
 
-    private void getLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) return;
+    private void getCurrentLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) return;
 
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, location -> {
-                    if (location != null) {
-                        tvLatitude.setText(String.format(Locale.getDefault(), "%s: %.6f", getString(R.string.latitude), location.getLatitude()));
-                        tvLongitude.setText(String.format(Locale.getDefault(), "%s: %.6f", getString(R.string.longitude), location.getLongitude()));
-                        tvSpeed.setText(String.format(Locale.getDefault(), "%s: %.2f m/s", getString(R.string.speed), location.getSpeed()));
-                        tvError.setVisibility(TextView.GONE);
-                    } else {
-                        showError(getString(R.string.loading));
-                    }
-                })
-                .addOnFailureListener(e -> showError("Error: " + e.getMessage()));
+        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                currentLat = location.getLatitude();
+                currentLng = location.getLongitude();
+                tvCurrent.setText(String.format(Locale.US, "فعلی: %.6f, %.6f", currentLat, currentLng));
+                tvAccuracy.setText("دقت: " + (int) location.getAccuracy() + " متر");
+                tvSpeed.setText("سرعت: " + String.format("%.1f", location.getSpeed() * 3.6) + " km/h");
+                getAddress(currentLat, currentLng, tvCurrentAddress);
+            } else {
+                tvCurrent.setText("در حال بارگذاری...");
+            }
+        }).addOnFailureListener(e -> {
+            tvCurrent.setText("خطا در دریافت مکان");
+        });
     }
 
-    private void showError(String msg) {
-        tvError.setText(msg);
-        tvError.setVisibility(TextView.VISIBLE);
+    private void getAddress(double lat, double lng, TextView tv) {
+        new Thread(() -> {
+            try {
+                Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                List<Address> list = geocoder.getFromLocation(lat, lng, 1);
+                if (list != null && !list.isEmpty()) {
+                    String addr = list.get(0).getAddressLine(0);
+                    runOnUiThread(() -> tv.setText(addr));
+                } else {
+                    runOnUiThread(() -> tv.setText("آدرس ناموجود"));
+                }
+            } catch (IOException e) {
+                runOnUiThread(() -> tv.setText("خطا در اینترنت"));
+            }
+        }).start();
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_PRESSURE) {
+            float pressure = event.values[0];
+            float altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure);
+            tvAltitude.setText(String.format(Locale.US, "ارتفاع: %.1f متر", altitude));
+        }
+    }
+
+    @Override public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (pressureSensor != null) {
+            sensorManager.registerListener(this, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
     }
 }

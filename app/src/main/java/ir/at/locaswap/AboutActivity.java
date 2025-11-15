@@ -7,13 +7,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class AboutActivity extends AppCompatActivity {
-    // نمایش محتوا با HTMLل
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
-        // تنظیم Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -21,7 +20,6 @@ public class AboutActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(R.string.about);
         }
 
-        // نمایش محتوا با HTML
         TextView tvContent = findViewById(R.id.tv_content);
         tvContent.setText(Html.fromHtml(getString(R.string.about_content), Html.FROM_HTML_MODE_COMPACT));
     }

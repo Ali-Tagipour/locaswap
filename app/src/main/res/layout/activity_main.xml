@@ -2,172 +2,198 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_bg">
 
-    <!-- پس‌زمینه با ذرات (اختیاری) -->
     <ImageView
-        android:id="@+id/particle_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gradient_background"
-        android:scaleType="centerCrop" />
+        android:id="@+id/radar_view"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_radar"
+        android:alpha="0.12" />
 
-    <!-- محتوای اصلی -->
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:orientation="vertical">
 
-            <!-- عنوان -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textSize="34sp"
+                android:text="لوکاسوآپ"
+                android:textSize="36sp"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:textColor="#FFFFFF"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="24dp" />
 
-            <!-- تغییر زبان -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_language"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/language"
-                android:layout_gravity="center"
-                android:layout_marginBottom="24dp"
-                app:strokeColor="@color/white"
-                app:icon="@android:drawable/ic_menu_mylocation"
-                app:iconTint="@color/white" />
-
-            <!-- کارت موقعیت -->
+            <!-- لوکیشن فعلی -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardElevation="12dp"
                 app:cardCornerRadius="20dp"
-                app:cardBackgroundColor="#80FFFFFF"
-                android:layout_marginBottom="24dp">
+                app:cardElevation="12dp"
+                android:layout_marginBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="18dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/current_location"
-                        android:textSize="22sp"
+                        android:text="موقعیت فعلی"
+                        android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="#1976D2"
-                        android:layout_marginBottom="16dp" />
+                        android:textColor="#1976D2" />
 
                     <TextView
-                        android:id="@+id/tv_latitude"
+                        android:id="@+id/tv_current"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/loading"
-                        android:background="#FFFFFF"
-                        android:padding="14dp"
-                        android:layout_marginBottom="8dp"
+                        android:text="در حال بارگذاری..."
+                        android:textColor="#1565C0"
+                        android:padding="8dp" />
+
+                    <TextView
+                        android:id="@+id/tv_current_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="آدرس: ---"
+                        android:textColor="#1976D2"
+                        android:padding="4dp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- لوکیشن هدف -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                android:layout_marginBottom="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="موقعیت هدف"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1976D2" />
+
+                    <TextView
+                        android:id="@+id/tv_target"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="هدف: انتخاب نشده"
+                        android:textColor="#1565C0"
+                        android:padding="8dp" />
+
+                    <TextView
+                        android:id="@+id/tv_target_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="آدرس: ---"
+                        android:textColor="#1976D2"
+                        android:padding="4dp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- اطلاعات سنسور -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="12dp"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="اطلاعات"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1976D2" />
+
+                    <TextView
+                        android:id="@+id/tv_accuracy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="دقت: ---"
                         android:textColor="#1565C0" />
 
                     <TextView
-                        android:id="@+id/tv_longitude"
+                        android:id="@+id/tv_altitude"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/loading"
-                        android:background="#FFFFFF"
-                        android:padding="14dp"
-                        android:layout_marginBottom="8dp"
+                        android:text="ارتفاع: ---"
                         android:textColor="#1565C0" />
 
                     <TextView
                         android:id="@+id/tv_speed"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/loading"
-                        android:background="#FFFFFF"
-                        android:padding="14dp"
-                        android:layout_marginBottom="16dp"
+                        android:text="سرعت: ---"
                         android:textColor="#1565C0" />
-
-                    <TextView
-                        android:id="@+id/tv_error"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text=""
-                        android:textColor="#D32F2F"
-                        android:background="#FFEBEE"
-                        android:padding="14dp"
-                        android:visibility="gone" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- دکمه‌های اصلی -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_change_location"
+            <!-- دکمه‌ها -->
+            <Button
+                android:id="@+id/btn_save_location"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="@string/change_location"
-                android:layout_marginBottom="12dp"
-                app:backgroundTint="@color/blue_primary"
-                app:icon="@android:drawable/ic_menu_mylocation"
-                app:iconGravity="start" />
+                android:text="ذخیره لوکیشن"
+                android:layout_marginBottom="12dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_show_map"
+            <Button
+                android:id="@+id/btn_map"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="@string/show_map"
-                android:layout_marginBottom="12dp"
-                app:backgroundTint="@color/green_500"
-                app:icon="@android:drawable/ic_menu_mapmode"
-                app:iconGravity="start" />
+                android:text="نقشه"
+                android:layout_marginBottom="20dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_add_move"
+            <Button
+                android:id="@+id/btn_start"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="@string/add_move"
-                android:layout_marginBottom="12dp"
-                app:backgroundTint="@color/blue_primary"
-                app:icon="@android:drawable/ic_menu_add"
-                app:iconGravity="start" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_process"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="@string/start_process"
-                android:layout_marginBottom="32dp"
-                app:backgroundTint="@color/red_500"
-                app:icon="@android:drawable/ic_media_play"
-                app:iconGravity="start" />
-
-            <!-- FAB برای منوی کمکی -->
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="16dp"
-                app:srcCompat="@android:drawable/ic_menu_info_details"
-                app:backgroundTint="@color/blue_primary"
-                app:tint="@color/white" />
+                android:layout_height="64dp"
+                android:text="شروع"
+                android:textSize="18sp" />
 
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="24dp"
+        android:src="@android:drawable/ic_menu_more"
+        app:tint="#FFFFFF" />
 
 </RelativeLayout>

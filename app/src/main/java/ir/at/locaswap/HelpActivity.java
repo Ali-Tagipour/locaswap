@@ -13,7 +13,6 @@ public class HelpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
-        // تنظیم Toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -21,7 +20,6 @@ public class HelpActivity extends AppCompatActivity {
             getSupportActionBar().setTitle(R.string.help);
         }
 
-        // نمایش محتوا با HTML
         TextView tvContent = findViewById(R.id.tv_content);
         tvContent.setText(Html.fromHtml(getString(R.string.help_content), Html.FROM_HTML_MODE_COMPACT));
     }
