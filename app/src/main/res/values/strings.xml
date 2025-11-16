@@ -6,90 +6,94 @@
 
     <!-- Location -->
     <string name="current_location">Current Location</string>
+    <string name="target_location">Target Location</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
     <string name="speed">Speed</string>
+    <string name="info">Information</string>
     <string name="loading">Loading...</string>
-    <string name="error_location">Location unavailable. Enable GPS or Mock Location.</string>
+
+    <!-- Placeholders -->
+    <string name="address_placeholder">Address: ---</string>
+    <string name="target_placeholder">Target: Not selected</string>
+    <string name="accuracy_placeholder">Accuracy: ---</string>
+    <string name="altitude_placeholder">Altitude: ---</string>
+    <string name="speed_placeholder">Speed: ---</string>
 
     <!-- Formats -->
     <string name="latitude_format">Latitude: %.6f</string>
     <string name="longitude_format">Longitude: %.6f</string>
     <string name="speed_format">Speed: %.2f m/s</string>
-
-    <!-- Extra Formats -->
     <string name="current_format">Current: %.6f, %.6f</string>
     <string name="target_format">Target: %.6f, %.6f</string>
     <string name="select_target">Target: Not selected</string>
 
     <!-- Buttons -->
-    <string name="change_location">Change Location</string>
-    <string name="show_map">Show Map</string>
-    <string name="hide_map">Hide Map</string>
-    <string name="add_move">Add / Move</string>
     <string name="paste_coords">Paste Coordinates</string>
     <string name="map">Map</string>
+    <string name="saved">Saved</string>
+    <string name="saved_locations">Saved Locations</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="clear_all">Clear All</string>
     <string name="ok">OK</string>
+    <string name="language">EN/FA</string>
 
     <!-- Pages -->
     <string name="help">Help</string>
     <string name="about">About</string>
     <string name="rules">Rules &amp; Policy</string>
-    <string name="language">Language</string>
 
     <!-- Messages -->
     <string name="clipboard_empty">Clipboard is empty</string>
     <string name="copied">Coordinates copied!</string>
-    <string name="invalid_format">Invalid format! Example: 35.6892, 51.3890</string>
+    <string name="invalid_format">Invalid format! Example: 38.064261, 46.256624</string>
     <string name="no_saved">No saved locations</string>
     <string name="cleared">All cleared</string>
 
-    <!-- Mock Location -->
+    <!-- Mock -->
     <string name="mock_started">Mock location started!</string>
     <string name="mock_error">Enable Mock Location in Developer Options</string>
 
-    <!-- Saved List -->
-    <string name="saved_locations">Saved Locations</string>
-
     <!-- About -->
     <string name="about_content"><![CDATA[
-        <b>LocaSwap</b> is a single-page Android application developed by <b>Ali Tagipour</b>.<br/><br/>
-        This project provides a <b>simple and secure tool for location tracking, map display, and process control</b>.<br/><br/>
-        • Developer: Ali Tagipour<br/>
-        • Website: <a href="https://alitagipour.ir">alitagipour.ir</a><br/>
-        • Language: Java<br/>
-        • IDE: Android Studio<br/>
-        • Open Source: Fully <b>public / open-source</b>. Anyone is free to use, review, or contribute.<br/><br/>
-        <b>Note:</b> This is an <b>educational demo</b>. The developer holds no responsibility for misuse or data loss.
+        <h3>LocaSwap - v1.0</h3>
+        <p>A professional fake location tool for developers and users</p>
+        <p><b>Features:</b></p>
+        <ul>
+            <li>Save and retrieve locations</li>
+            <li>Interactive map</li>
+            <li>Display speed, accuracy, altitude</li>
+            <li>Address lookup</li>
+            <li>Paste coordinates from clipboard</li>
+            <li>Language switch (EN/FA)</li>
+        </ul>
+        <p>Made with love in Iran</p>
+        <p>Contact: <a href="mailto:support@locaswap.ir">support@locaswap.ir</a></p>
     ]]></string>
 
     <!-- Rules -->
     <string name="rules_content"><![CDATA[
-        <b>1. Open Source:</b><br/>
-        Licensed under the <b>MIT</b> license. Free to use, modify, and share.<br/><br/>
-
-        <b>2. No Liability:</b><br/>
-        The developer is not responsible for misuse, bugs, or data loss. Educational purposes only.<br/><br/>
-
-        <b>3. Legal Use:</b><br/>
-        Must comply with <b>local and international laws</b>. Misuse is prohibited.<br/><br/>
-
-        <b>4. Privacy:</b><br/>
-        No sensitive data is stored. Location is only displayed on-device. No server communication.
+        <h3>Privacy Policy</h3>
+        <p>This app:</p>
+        <ul>
+            <li>Does not send any data to servers</li>
+            <li>Your location is stored only on the device</li>
+            <li>No permissions for calls, SMS, or camera</li>
+        </ul>
+        <p>Use this tool for legal purposes only.</p>
     ]]></string>
 
     <!-- Help -->
     <string name="help_content"><![CDATA[
-        To test mock location in <b>Developer Options</b>:<br/><br/>
-        1. Go to <b>Settings → About Phone → Build Number</b> and tap 7 times.<br/>
-        2. Open <b>Settings → Developer Options</b>.<br/>
-        3. Enable <b>Allow Mock Locations</b>.<br/>
-        4. Select <b>LocaSwap</b> as the <b>Mock Location App</b>.<br/>
-        5. Now test fake locations in the app.<br/><br/>
-        <b>Warning:</b> For <b>development and testing only</b>. Not for production use.
+        <h3>How to Use</h3>
+        <ol>
+            <li>Go to <b>Settings → About Phone</b></li>
+            <li>Tap <b>Build Number</b> 7 times</li>
+            <li>In <b>Developer Options</b>, set <b>Mock Location App</b> to <b>LocaSwap</b></li>
+            <li>Enter coordinates and tap <b>Start</b></li>
+        </ol>
+        <p><b>Note:</b> Internet is required for address.</p>
     ]]></string>
 
 </resources>

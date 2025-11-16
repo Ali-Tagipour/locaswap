@@ -26,7 +26,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="لوکاسوآپ"
+                android:text="@string/app_name"
                 android:textSize="36sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -50,7 +50,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="موقعیت فعلی"
+                        android:text="@string/current_location"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#1976D2" />
@@ -59,7 +59,7 @@
                         android:id="@+id/tv_current"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="در حال بارگذاری..."
+                        android:text="@string/loading"
                         android:textColor="#1565C0"
                         android:padding="8dp" />
 
@@ -67,7 +67,7 @@
                         android:id="@+id/tv_current_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="آدرس: ---"
+                        android:text="@string/address_placeholder"
                         android:textColor="#1976D2"
                         android:padding="4dp" />
 
@@ -91,7 +91,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="موقعیت هدف"
+                        android:text="@string/target_location"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#1976D2" />
@@ -100,7 +100,7 @@
                         android:id="@+id/tv_target"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="هدف: انتخاب نشده"
+                        android:text="@string/target_placeholder"
                         android:textColor="#1565C0"
                         android:padding="8dp" />
 
@@ -108,15 +108,16 @@
                         android:id="@+id/tv_target_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="آدرس: ---"
+                        android:text="@string/address_placeholder"
                         android:textColor="#1976D2"
                         android:padding="4dp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- اطلاعات سنسور -->
+            <!-- اطلاعات -->
             <com.google.android.material.card.MaterialCardView
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="20dp"
@@ -132,7 +133,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="اطلاعات"
+                        android:text="@string/info"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#1976D2" />
@@ -141,47 +142,81 @@
                         android:id="@+id/tv_accuracy"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="دقت: ---"
+                        android:text="@string/accuracy_placeholder"
                         android:textColor="#1565C0" />
 
                     <TextView
                         android:id="@+id/tv_altitude"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="ارتفاع: ---"
+                        android:text="@string/altitude_placeholder"
                         android:textColor="#1565C0" />
 
                     <TextView
                         android:id="@+id/tv_speed"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="سرعت: ---"
+                        android:text="@string/speed_placeholder"
                         android:textColor="#1565C0" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
             <!-- دکمه‌ها -->
-            <Button
-                android:id="@+id/btn_save_location"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="ذخیره لوکیشن"
-                android:layout_marginBottom="12dp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <Button
+                    android:id="@+id/btn_paste"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="56dp"
+                    android:text="@string/paste_coords"
+                    android:layout_marginEnd="6dp" />
+
+                <Button
+                    android:id="@+id/btn_saved"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="56dp"
+                    android:text="@string/saved"
+                    android:layout_marginStart="6dp" />
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btn_map"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="نقشه"
-                android:layout_marginBottom="20dp" />
+                android:text="@string/map"
+                android:layout_marginBottom="12dp" />
 
-            <Button
-                android:id="@+id/btn_start"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:text="شروع"
-                android:textSize="18sp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_language"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="56dp"
+                    android:text="@string/language"
+                    android:layout_marginEnd="6dp" />
+
+                <Button
+                    android:id="@+id/btn_process"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="56dp"
+                    android:text="@string/start"
+                    android:textSize="18sp"
+                    android:layout_marginStart="6dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

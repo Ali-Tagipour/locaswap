@@ -6,90 +6,94 @@
 
     <!-- موقعیت -->
     <string name="current_location">موقعیت فعلی</string>
+    <string name="target_location">موقعیت هدف</string>
     <string name="latitude">عرض جغرافیایی</string>
     <string name="longitude">طول جغرافیایی</string>
     <string name="speed">سرعت</string>
+    <string name="info">اطلاعات</string>
     <string name="loading">در حال بارگذاری...</string>
-    <string name="error_location">موقعیت در دسترس نیست. GPS یا Mock Location را فعال کنید.</string>
+
+    <!-- Placeholder -->
+    <string name="address_placeholder">آدرس: ---</string>
+    <string name="target_placeholder">هدف: انتخاب نشده</string>
+    <string name="accuracy_placeholder">دقت: ---</string>
+    <string name="altitude_placeholder">ارتفاع: ---</string>
+    <string name="speed_placeholder">سرعت: ---</string>
 
     <!-- فرمت‌ها -->
     <string name="latitude_format">عرض جغرافیایی: %.6f</string>
     <string name="longitude_format">طول جغرافیایی: %.6f</string>
     <string name="speed_format">سرعت: %.2f متر/ثانیه</string>
-
-    <!-- فرمت‌های اضافه -->
     <string name="current_format">فعلی: %.6f، %.6f</string>
     <string name="target_format">هدف: %.6f، %.6f</string>
     <string name="select_target">هدف: انتخاب نشده</string>
 
     <!-- دکمه‌ها -->
-    <string name="change_location">تغییر موقعیت</string>
-    <string name="show_map">نمایش نقشه</string>
-    <string name="hide_map">پنهان کردن نقشه</string>
-    <string name="add_move">اضافه / جابجایی</string>
-    <string name="paste_coords">کپی مختصات</string>
+    <string name="paste_coords">پیست مختصات</string>
     <string name="map">نقشه</string>
+    <string name="saved">ذخیره‌شده‌ها</string>
+    <string name="saved_locations">لوکیشن‌های ذخیره‌شده</string>
     <string name="start">شروع</string>
     <string name="stop">توقف</string>
     <string name="clear_all">حذف همه</string>
     <string name="ok">تأیید</string>
+    <string name="language">FA/EN</string>
 
     <!-- صفحات -->
     <string name="help">راهنما</string>
     <string name="about">درباره ما</string>
     <string name="rules">قوانین و سیاست‌ها</string>
-    <string name="language">زبان</string>
 
     <!-- پیام‌ها -->
     <string name="clipboard_empty">کلیپ‌بورد خالی است</string>
     <string name="copied">مختصات کپی شد!</string>
-    <string name="invalid_format">فرمت اشتباه! مثال: 35.6892, 51.3890</string>
-    <string name="no_saved">هیچ مختصاتی ذخیره نشده</string>
-    <string name="cleared">همه حذف شدند</string>
+    <string name="invalid_format">فرمت اشتباه! مثال: 38.064261, 46.256624</string>
+    <string name="no_saved">هیچ لوکیشنی ذخیره نشده</string>
+    <string name="cleared">همه پاک شدند</string>
 
     <!-- Mock Location -->
     <string name="mock_started">موقعیت جعلی فعال شد!</string>
     <string name="mock_error">گزینه Mock Location را در Developer Options فعال کنید</string>
 
-    <!-- لیست مختصات -->
-    <string name="saved_locations">مختصات ذخیره‌شده</string>
-
     <!-- درباره ما -->
     <string name="about_content"><![CDATA[
-        <b>لوکاسوآپ</b> یک اپلیکیشن تک‌صفحه‌ای اندروید است که توسط <b>علی تقی‌پور</b> توسعه داده شده است.<br/><br/>
-        این پروژه یک <b>ابزار ساده و امن برای ردیابی موقعیت، نمایش نقشه و کنترل فرایندها</b> ارائه می‌دهد.<br/><br/>
-        • توسعه‌دهنده: علی تقی‌پور<br/>
-        • وبسایت: <a href="https://alitagipour.ir">alitagipour.ir</a><br/>
-        • زبان: جاوا<br/>
-        • IDE: اندروید استودیو<br/>
-        • منبع‌باز: کاملاً <b>عمومی / منبع‌باز</b> است. همه می‌توانند استفاده، بررسی یا مشارکت کنند.<br/><br/>
-        <b>توجه:</b> این یک <b>پروژه آموزشی</b> است و توسعه‌دهنده مسئولیتی در قبال سوءاستفاده یا از دست رفتن داده ندارد.
+        <h3>لوکاسوآپ - نسخه ۱.۰</h3>
+        <p>ابزار حرفه‌ای تغییر موقعیت جعلی برای توسعه‌دهندگان و کاربران</p>
+        <p><b>ویژگی‌ها:</b></p>
+        <ul>
+            <li>ذخیره و بازیابی لوکیشن</li>
+            <li>نقشه تعاملی</li>
+            <li>نمایش سرعت، دقت، ارتفاع</li>
+            <li>آدرس از اینترنت</li>
+            <li>پیست مختصات از کلیپ‌بورد</li>
+            <li>تغییر زبان (FA/EN)</li>
+        </ul>
+        <p>ساخته شده با عشق در ایران</p>
+        <p>تماس: <a href="mailto:support@locaswap.ir">support@locaswap.ir</a></p>
     ]]></string>
 
     <!-- قوانین -->
     <string name="rules_content"><![CDATA[
-        <b>۱. منبع‌باز:</b><br/>
-        تحت مجوز <b>MIT</b>. آزاد برای استفاده، تغییر و اشتراک‌گذاری.<br/><br/>
-
-        <b>۲. عدم مسئولیت:</b><br/>
-        توسعه‌دهنده مسئولیتی در قبال خطا، سوءاستفاده یا از دست رفتن داده ندارد. فقط برای <b>آموزش</b>.<br/><br/>
-
-        <b>۳. رعایت قانون:</b><br/>
-        باید مطابق <b>قوانین ایران و بین‌المللی</b> استفاده شود. سوءاستفاده ممنوع.<br/><br/>
-
-        <b>۴. حریم خصوصی:</b><br/>
-        هیچ داده حساسی ذخیره نمی‌شود. موقعیت فقط روی دستگاه نمایش داده می‌شود. بدون ارتباط با سرور.
+        <h3>سیاست حریم خصوصی</h3>
+        <p>این برنامه:</p>
+        <ul>
+            <li>هیچ داده‌ای به سرور ارسال نمی‌کند</li>
+            <li>موقعیت شما فقط در دستگاه ذخیره می‌شود</li>
+            <li>هیچ مجوزی برای تماس، پیامک یا دوربین ندارد</li>
+        </ul>
+        <p>استفاده از این ابزار فقط باید قانونی باشد.</p>
     ]]></string>
 
     <!-- راهنما -->
     <string name="help_content"><![CDATA[
-        برای تست موقعیت جعلی در <b>گزینه‌های توسعه‌دهنده</b>:<br/><br/>
-        ۱. به <b>تنظیمات → درباره گوشی → شماره ساخت</b> بروید و ۷ بار بزنید.<br/>
-        ۲. وارد <b>گزینه‌های توسعه‌دهنده</b> شوید.<br/>
-        ۳. گزینه <b>اجازه موقعیت جعلی</b> را فعال کنید.<br/>
-        ۴. <b>لوکاسوآپ</b> را به عنوان <b>برنامه موقعیت جعلی</b> انتخاب کنید.<br/>
-        ۵. حالا موقعیت جعلی را تست کنید.<br/><br/>
-        <b>هشدار:</b> فقط جهت <b>توسعه و تست</b>. استفاده واقعی ممنوع.
+        <h3>نحوه استفاده</h3>
+        <ol>
+            <li>به <b>تنظیمات → درباره گوشی</b> بروید</li>
+            <li>۷ بار روی <b>شماره ساخت</b> بزنید</li>
+            <li>در <b>Developer Options</b> گزینه <b>Mock Location App</b> را روی <b>لوکاسوآپ</b> تنظیم کنید</li>
+            <li>مختصات را وارد کرده و <b>شروع</b> را بزنید</li>
+        </ol>
+        <p><b>نکته:</b> برای نمایش آدرس نیاز به اینترنت دارید.</p>
     ]]></string>
 
 </resources>
