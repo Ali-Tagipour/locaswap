@@ -2,9 +2,15 @@ package ir.at.locaswap;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.*;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -19,13 +25,25 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         currentLat = getIntent().getDoubleExtra("current_lat", 35.6892);
         currentLng = getIntent().getDoubleExtra("current_lng", 51.3890);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+        if (mapFragment != null) {
+            try {
+                mapFragment.getMapAsync(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+        } else {
+            setResult(RESULT_CANCELED);
+            finish();
+        }
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
         LatLng start = new LatLng(currentLat, currentLng);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(start, 15));

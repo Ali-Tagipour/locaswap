@@ -29,15 +29,16 @@
     <string name="select_target">Target: Not selected</string>
 
     <!-- Buttons -->
-    <string name="paste_coords">Paste Coordinates</string>
-    <string name="map">Map</string>
-    <string name="saved">Saved</string>
-    <string name="saved_locations">Saved Locations</string>
-    <string name="start">Start</string>
-    <string name="stop">Stop</string>
-    <string name="clear_all">Clear All</string>
-    <string name="ok">OK</string>
-    <string name="language">EN/FA</string>
+    <string name="paste_coords">📋 Paste</string>
+    <string name="map">🗺 Map</string>
+    <string name="saved">💾 Save</string>
+    <string name="saved_locations">📂 Locations</string>
+    <string name="start">▶️ Start</string>
+    <string name="stop">⏹️ Stop</string>
+    <string name="clear_all">🗑️ Clear</string>
+    <string name="ok">✅ OK</string>
+    <string name="language">🌐 EN/FA</string>
+
 
     <!-- Pages -->
     <string name="help">Help</string>
@@ -47,7 +48,7 @@
     <!-- Messages -->
     <string name="clipboard_empty">Clipboard is empty</string>
     <string name="copied">Coordinates copied!</string>
-    <string name="invalid_format">Invalid format! Example: 38.064261, 46.256624</string>
+    <string name="invalid_format">Invalid format! Example: 0.000000, 0.000000</string>
     <string name="no_saved">No saved locations</string>
     <string name="cleared">All cleared</string>
 
@@ -57,43 +58,62 @@
 
     <!-- About -->
     <string name="about_content"><![CDATA[
-        <h3>LocaSwap - v1.0</h3>
-        <p>A professional fake location tool for developers and users</p>
-        <p><b>Features:</b></p>
-        <ul>
-            <li>Save and retrieve locations</li>
-            <li>Interactive map</li>
-            <li>Display speed, accuracy, altitude</li>
-            <li>Address lookup</li>
-            <li>Paste coordinates from clipboard</li>
-            <li>Language switch (EN/FA)</li>
-        </ul>
-        <p>Made with love in Iran</p>
-        <p>Contact: <a href="mailto:support@locaswap.ir">support@locaswap.ir</a></p>
-    ]]></string>
+<h3>📍 LocaSwap — v1.0</h3>
+<p>A modern and reliable mock‑location tool designed for developers, testers, and educational use.</p>
+
+<p><b>✨ Key Features:</b></p>
+<ul>
+    <li>💾 Save and restore your custom locations</li>
+    <li>🗺️ Interactive map with precise point selection</li>
+    <li>📊 Display speed, accuracy, altitude, and environment data</li>
+    <li>🌐 Automatic address lookup via the internet</li>
+    <li>📋 Paste coordinates directly from the clipboard</li>
+    <li>🌍 Full language support (EN / FA)</li>
+</ul>
+
+<p>⚠️ This application is intended strictly for development, testing, and educational purposes. Any misuse is the responsibility of the user; the developer is not liable.</p>
+
+<p>💙 Proudly crafted with care in Iran</p>
+<p>🌐 Official Website: <a href="https://alitagipour.ir">alitagipour.ir</a></p>
+]]></string>
+
 
     <!-- Rules -->
     <string name="rules_content"><![CDATA[
-        <h3>Privacy Policy</h3>
-        <p>This app:</p>
-        <ul>
-            <li>Does not send any data to servers</li>
-            <li>Your location is stored only on the device</li>
-            <li>No permissions for calls, SMS, or camera</li>
-        </ul>
-        <p>Use this tool for legal purposes only.</p>
-    ]]></string>
+<h3>Privacy Policy & Legal Usage Terms</h3>
+<p>This application is an experimental tool created exclusively for <b>software development, testing, educational purposes, and portfolio/resume demonstration</b>.</p>
+<p>Any improper, unlawful, or unauthorized usage is entirely the responsibility of the user. The developer has no control, involvement, or liability regarding how this tool is used.</p>
+
+<p><b>This app:</b></p>
+<ul>
+<li>Does not send any data to any server</li>
+<li>Stores all settings and coordinates only on the device</li>
+<li>Requests no permissions for calls, SMS, camera, or unnecessary access</li>
+<li>Cannot and must not be used to bypass rules of universities, organizations, services, or any official systems</li>
+<li>Strictly prohibits cheating, falsifying location, bypassing verification systems, or any illegal activity</li>
+</ul>
+
+<p><b>Disclaimer:</b> All responsibility for any misuse, illegal actions, or violation of regulations lies entirely with the user. This tool is not designed for deception, cheating, or any form of unauthorized behavior.</p>
+
+<p>Official developer website: <a href="https://alitagipour.ir">alitagipour.ir</a></p>
+]]></string>
+
+
+
 
     <!-- Help -->
     <string name="help_content"><![CDATA[
-        <h3>How to Use</h3>
-        <ol>
-            <li>Go to <b>Settings → About Phone</b></li>
-            <li>Tap <b>Build Number</b> 7 times</li>
-            <li>In <b>Developer Options</b>, set <b>Mock Location App</b> to <b>LocaSwap</b></li>
-            <li>Enter coordinates and tap <b>Start</b></li>
-        </ol>
-        <p><b>Note:</b> Internet is required for address.</p>
-    ]]></string>
+<h3>📌 How to Use LocaSwap</h3>
+<p>⚠️ This application is intended strictly for development, testing, and resume-building purposes. Do not use it for illegal activities.</p>
+<ol>
+    <li>📱 Open <b>Settings → About Phone</b>.</li>
+    <li>🛠️ Tap <b>Build Number</b> 7 times to enable <b>Developer Options</b>.</li>
+    <li>🔧 Go to <b>Developer Options → Mock Location App</b> and select <b>LocaSwap</b>.</li>
+    <li>📍 Enter the coordinates you want to mock and tap <b>Start</b>.</li>
+</ol>
+<p>🌐 <b>Note:</b> Internet is required to display the address correctly.</p>
+<p>💻 For support and more info, visit: <a href="https://alitagipour.ir">alitagipour.ir</a></p>
+]]></string>
+
 
 </resources>

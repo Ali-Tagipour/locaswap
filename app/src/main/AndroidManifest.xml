@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ir.at.locaswap">
 
     <!-- Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Permission for Mock Location -->
+    <uses-permission
+        android:name="android.permission.ACCESS_MOCK_LOCATION"
+        tools:ignore="MockLocation" />
 
     <application
         android:allowBackup="true"
@@ -14,12 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LocaSwap">
 
-        <!-- فعال‌سازی Mock Location -->
-        <meta-data
-            android:name="mock_location"
-            android:value="true" />
-
-        <!-- Splash Activity (Only Launcher) -->
+        <!-- Splash Activity -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -35,7 +36,6 @@
             android:name=".MainActivity"
             android:exported="false" />
 
-        <!-- Other Activities -->
         <activity android:name=".MapActivity" android:exported="false" />
         <activity android:name=".AboutActivity" android:exported="false" />
         <activity android:name=".HelpActivity" android:exported="false" />
@@ -44,7 +44,7 @@
         <!-- Google Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_GOOGLE_MAPS_API_KEY" />
+            android:value="AIzaSyC0odqlTO7Avk1H63w41dps7qiB-QQXJic" />
 
     </application>
 

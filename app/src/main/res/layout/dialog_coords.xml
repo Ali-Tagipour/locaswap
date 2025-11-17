@@ -9,14 +9,14 @@
         android:id="@+id/et_lat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="عرض جغرافیایی (مثل 38.064261)"
+        android:hint="عرض جغرافیایی (مثل 00.000000)"
         android:inputType="numberDecimal|numberSigned" />
 
     <EditText
         android:id="@+id/et_lng"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="طول جغرافیایی (مثل 46.256624)"
+        android:hint="طول جغرافیایی (مثل 00.000000)"
         android:inputType="numberDecimal|numberSigned"
         android:layout_marginTop="8dp" />
 

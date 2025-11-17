@@ -2,26 +2,41 @@ package ir.at.locaswap;
 
 import android.Manifest;
 import android.animation.ValueAnimator;
-import android.content.*;
-import android.content.pm.PackageManager;
+import android.app.AppOpsManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.*;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.location.provider.ProviderProperties;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.view.*;
-import android.widget.*;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,17 +47,23 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
+    private static final String TAG = "MainActivity";
     private static final int LOCATION_PERMISSION_CODE = 100;
+
     private FusedLocationProviderClient fusedLocationClient;
     private TextView tvCurrent, tvTarget, tvAccuracy, tvAltitude, tvSpeed, tvCurrentAddress, tvTargetAddress;
     private Button btnPaste, btnSaved, btnMap, btnLanguage, btnProcess;
     private FloatingActionButton fabMenu;
     private ImageView radarView;
-    private boolean isProcessRunning = false;
+
+    private volatile boolean isProcessRunning = false;
     private LocationManager locationManager;
     private SharedPreferences prefs;
     private double mockLat = 0, mockLng = 0;
@@ -50,15 +71,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     private Sensor pressureSensor;
 
+    private Handler mockHandler = new Handler(Looper.getMainLooper());
+    private Runnable mockRunnable;
+
     private final ActivityResultLauncher<Intent> mapLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    mockLat = result.getData().getDoubleExtra("lat", 0);
-                    mockLng = result.getData().getDoubleExtra("lng", 0);
-                    updateTargetLocation();
-                    saveLocation(mockLat, mockLng);
-                    getAddress(mockLat, mockLng, tvTargetAddress);
+                try {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        mockLat = result.getData().getDoubleExtra("lat", 0);
+                        mockLng = result.getData().getDoubleExtra("lng", 0);
+                        updateTargetLocation();
+                        saveLocation(mockLat, mockLng);
+                        getAddress(mockLat, mockLng, tvTargetAddress);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "mapLauncher error", e);
                 }
             });
 
@@ -71,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         initServices();
         loadLastTarget();
         requestLocationPermission();
-        setupButtons();
+        safeSetupButtons();
         startRadarAnimation();
         setupFabMenu();
 
@@ -104,20 +132,47 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        pressureSensor = sensorManager != null ? sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) : null;
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
-    private void setupButtons() {
-        btnPaste.setOnClickListener(v -> showCoordinateDialog());
-        btnSaved.setOnClickListener(v -> showSavedLocations());
-        btnMap.setOnClickListener(v -> openMap());
-        btnLanguage.setOnClickListener(v -> changeLanguage());
-        btnProcess.setOnClickListener(v -> toggleMock());
+    private void safeSetupButtons() {
+        btnPaste.setOnClickListener(v -> {
+            try { showCoordinateDialog(); }
+            catch (Exception e) { handleClickException("paste", e); }
+        });
+
+        btnSaved.setOnClickListener(v -> {
+            try { showSavedLocations(); }
+            catch (Exception e) { handleClickException("saved", e); }
+        });
+
+        btnMap.setOnClickListener(v -> {
+            try { openMap(); }
+            catch (Exception e) { handleClickException("map", e); }
+        });
+
+        btnLanguage.setOnClickListener(v -> {
+            try { changeLanguage(); }
+            catch (Exception e) { handleClickException("language", e); }
+        });
+
+        btnProcess.setOnClickListener(v -> {
+            try { toggleMock(); }
+            catch (Exception e) { handleClickException("process", e); }
+        });
+    }
+
+    private void handleClickException(String source, Exception e) {
+        Log.e(TAG, "Button click error: " + source, e);
+        Toast.makeText(this, "خطا در اجرای عملیات: " + source, Toast.LENGTH_SHORT).show();
     }
 
     private void setupFabMenu() {
-        fabMenu.setOnClickListener(v -> showFabMenu());
+        fabMenu.setOnClickListener(v -> {
+            try { showFabMenu(); }
+            catch (Exception e) { handleClickException("fab", e); }
+        });
     }
 
     private void showFabMenu() {
@@ -125,9 +180,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         popup.getMenuInflater().inflate(R.menu.menu_main, popup.getMenu());
         popup.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.menu_about) startActivity(new Intent(this, AboutActivity.class));
-            else if (id == R.id.menu_policy) startActivity(new Intent(this, RulesActivity.class));
-            else if (id == R.id.menu_help) startActivity(new Intent(this, HelpActivity.class));
+            try {
+                if (id == R.id.menu_about) startActivity(new Intent(this, AboutActivity.class));
+                else if (id == R.id.menu_policy) startActivity(new Intent(this, RulesActivity.class));
+                else if (id == R.id.menu_help) startActivity(new Intent(this, HelpActivity.class));
+            } catch (Exception e) {
+                handleClickException("menu_item", e);
+            }
             return true;
         });
         popup.show();
@@ -152,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             saveLocation(mockLat, mockLng);
                             getAddress(mockLat, mockLng, tvTargetAddress);
                         } catch (Exception e) {
+                            Log.e(TAG, "parse coords", e);
                             Toast.makeText(this, "فرمت اشتباه!", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -161,26 +221,36 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void showSavedLocations() {
-        Set<String> set = prefs.getStringSet("saved_locations", new HashSet<>());
-        if (set.isEmpty()) {
-            Toast.makeText(this, "هیچ لوکیشنی ذخیره نشده", Toast.LENGTH_SHORT).show();
-            return;
+        try {
+            Set<String> set = new HashSet<>(prefs.getStringSet("saved_locations", new HashSet<>()));
+            if (set.isEmpty()) {
+                Toast.makeText(this, "هیچ لوکیشنی ذخیره نشده", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String[] items = set.toArray(new String[0]);
+            new AlertDialog.Builder(this)
+                    .setTitle("لوکیشن‌های ذخیره‌شده")
+                    .setItems(items, (d, i) -> {
+                        try {
+                            String[] coords = items[i].split(",\\s*");
+                            mockLat = Double.parseDouble(coords[0]);
+                            mockLng = Double.parseDouble(coords[1]);
+                            updateTargetLocation();
+                            getAddress(mockLat, mockLng, tvTargetAddress);
+                        } catch (Exception ex) {
+                            Log.e(TAG, "parse saved coords", ex);
+                            Toast.makeText(this, "خطا در خواندن مختصات", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton("پاک کردن همه", (d, i) -> {
+                        prefs.edit().remove("saved_locations").apply();
+                        Toast.makeText(this, "همه پاک شدند", Toast.LENGTH_SHORT).show();
+                    })
+                    .show();
+        } catch (Exception e) {
+            Log.e(TAG, "showSavedLocations", e);
+            Toast.makeText(this, "خطا در نمایش ذخیره‌ها", Toast.LENGTH_SHORT).show();
         }
-        String[] items = set.toArray(new String[0]);
-        new AlertDialog.Builder(this)
-                .setTitle("لوکیشن‌های ذخیره‌شده")
-                .setItems(items, (d, i) -> {
-                    String[] coords = items[i].split(", ");
-                    mockLat = Double.parseDouble(coords[0]);
-                    mockLng = Double.parseDouble(coords[1]);
-                    updateTargetLocation();
-                    getAddress(mockLat, mockLng, tvTargetAddress);
-                })
-                .setNegativeButton("پاک کردن همه", (d, i) -> {
-                    prefs.edit().remove("saved_locations").apply();
-                    Toast.makeText(this, "همه پاک شدند", Toast.LENGTH_SHORT).show();
-                })
-                .show();
     }
 
     private void openMap() {
@@ -191,14 +261,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void changeLanguage() {
-        String current = Locale.getDefault().getLanguage();
-        String newLang = current.equals("fa") ? "en" : "fa";
-        Locale locale = new Locale(newLang);
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.setLocale(locale);
-        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-        recreate();
+        try {
+            String current = Locale.getDefault().getLanguage();
+            String newLang = current.equals("fa") ? "en" : "fa";
+            Locale locale = new Locale(newLang);
+            Locale.setDefault(locale);
+            Configuration config = new Configuration();
+            config.setLocale(locale);
+            getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+            recreate();
+        } catch (Exception e) {
+            Log.e(TAG, "changeLanguage failed", e);
+            Toast.makeText(this, "عدم تغییر زبان", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void saveLocation(double lat, double lng) {
@@ -209,41 +284,63 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void loadLastTarget() {
-        mockLat = Double.longBitsToDouble(prefs.getLong("mock_lat", 0));
-        mockLng = Double.longBitsToDouble(prefs.getLong("mock_lng", 0));
-        if (mockLat != 0 && mockLng != 0) updateTargetLocation();
+        try {
+            mockLat = Double.longBitsToDouble(prefs.getLong("mock_lat", 0));
+            mockLng = Double.longBitsToDouble(prefs.getLong("mock_lng", 0));
+            if (mockLat != 0 || mockLng != 0) updateTargetLocation();
+        } catch (Exception e) {
+            Log.e(TAG, "loadLastTarget", e);
+        }
     }
 
     private void updateTargetLocation() {
-        tvTarget.setText(String.format(Locale.US, "هدف: %.6f, %.6f", mockLat, mockLng));
-        prefs.edit()
-                .putLong("mock_lat", Double.doubleToRawLongBits(mockLat))
-                .putLong("mock_lng", Double.doubleToRawLongBits(mockLng))
-                .apply();
+        try {
+            tvTarget.setText(String.format(Locale.US, "هدف: %.6f, %.6f", mockLat, mockLng));
+            prefs.edit()
+                    .putLong("mock_lat", Double.doubleToRawLongBits(mockLat))
+                    .putLong("mock_lng", Double.doubleToRawLongBits(mockLng))
+                    .apply();
+        } catch (Exception e) {
+            Log.e(TAG, "updateTargetLocation", e);
+        }
     }
 
     private void toggleMock() {
         isProcessRunning = !isProcessRunning;
-        btnProcess.setText(isProcessRunning ? "توقف" : "شروع");
+        updateProcessButtonText();
 
         if (isProcessRunning) {
-            if (!isMockLocationEnabled()) {
+            if (!isMockLocationAllowedForApp()) {
                 showMockLocationWarning();
                 isProcessRunning = false;
-                btnProcess.setText("شروع");
+                updateProcessButtonText();
                 return;
             }
             startMockLocation();
         } else {
             stopMockLocation();
-            moveTaskToBack(true);
         }
     }
 
-    private boolean isMockLocationEnabled() {
+    private void updateProcessButtonText() {
+        if (btnProcess != null) {
+            btnProcess.setText(isProcessRunning ? getString(R.string.stop) : getString(R.string.start));
+        }
+    }
+
+    private boolean isMockLocationAllowedForApp() {
         try {
-            return Settings.Secure.getInt(getContentResolver(), "mock_location") == 1;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                AppOpsManager appOps = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+                if (appOps == null) return false;
+                int mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_MOCK_LOCATION, android.os.Process.myUid(), getPackageName());
+                return mode == AppOpsManager.MODE_ALLOWED;
+            } else {
+                String val = Settings.Secure.getString(getContentResolver(), Settings.Secure.ALLOW_MOCK_LOCATION);
+                return "1".equals(val);
+            }
         } catch (Exception e) {
+            Log.e(TAG, "isMockLocationAllowedForApp", e);
             return false;
         }
     }
@@ -257,9 +354,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 .show();
     }
 
-    // ------------------------
-    // MOCK LOCATION (FIXED)
-    // ------------------------
     private void startMockLocation() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -268,78 +362,52 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         try {
-            try {
-                locationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
-            } catch (Exception ignored) {}
+            if (locationManager.getProvider(LocationManager.GPS_PROVIDER) != null) {
+                try { locationManager.removeTestProvider(LocationManager.GPS_PROVIDER); } catch (Exception ignored) {}
+            }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-
-                // ------------------------
-                // ANDROID 12+ (API 31+)
-                // SupportsAltitude/Speed حذف شده‌اند
-                // ------------------------
                 ProviderProperties properties = new ProviderProperties.Builder()
                         .setAccuracy(ProviderProperties.ACCURACY_FINE)
                         .setPowerUsage(ProviderProperties.POWER_USAGE_LOW)
-                        // ❌ این سه تا در API جدید وجود ندارند
-                        // .setSupportsAltitude(...)
-                        // .setSupportsSpeed(...)
-                        // .setSupportsBearing(...)
                         .build();
-
-                locationManager.addTestProvider(
-                        LocationManager.GPS_PROVIDER,
-                        properties
-                );
-
+                try { locationManager.addTestProvider(LocationManager.GPS_PROVIDER, properties); } catch (Exception ignored) {}
             } else {
-
-                // ------------------------
-                // ANDROID 11- (API 30-)
-                // اینجا متدها موجودند
-                // ------------------------
-                locationManager.addTestProvider(
-                        LocationManager.GPS_PROVIDER,
-                        false,   // requiresNetwork
-                        false,   // requiresSatellite
-                        false,   // requiresCell
-                        false,   // hasMonetaryCost
-                        true,    // supportsAltitude
-                        true,    // supportsSpeed
-                        true,    // supportsBearing
-                        1,       // powerRequirement
-                        1        // accuracy
-                );
+                try {
+                    locationManager.addTestProvider(
+                            LocationManager.GPS_PROVIDER,
+                            false, false, false, false, true, true, true, 1, 1
+                    );
+                } catch (Exception ignored) {}
             }
 
-            locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true);
+            try { locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, true); } catch (Exception ignored) {}
 
-            Location mock = new Location(LocationManager.GPS_PROVIDER);
+            final Location mock = new Location(LocationManager.GPS_PROVIDER);
             mock.setLatitude(mockLat);
             mock.setLongitude(mockLng);
             mock.setAccuracy(5f);
             mock.setSpeed(0f);
             mock.setBearing(0f);
             mock.setTime(System.currentTimeMillis());
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 mock.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
             }
 
-            new Thread(() -> {
-                while (isProcessRunning) {
-                    try {
-                        locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, mock);
-                    } catch (Exception ignored) {}
-                    try { Thread.sleep(1000); } catch (Exception ignored) {}
+            mockRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    if (!isProcessRunning) return;
+                    try { locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, mock); } catch (Exception ignored) {}
+                    mockHandler.postDelayed(this, 1000);
                 }
-            }).start();
+            };
+            mockHandler.post(mockRunnable);
 
-            runOnUiThread(() ->
-                    Toast.makeText(this, "موقعیت جعلی فعال شد!", Toast.LENGTH_SHORT).show()
-            );
+            runOnUiThread(() -> Toast.makeText(this, "موقعیت جعلی فعال شد!", Toast.LENGTH_SHORT).show());
 
         } catch (Exception e) {
+            Log.e(TAG, "startMockLocation", e);
             runOnUiThread(() -> {
                 Toast.makeText(this, "خطا: Developer Options → Mock Location App → LocaSwap", Toast.LENGTH_LONG).show();
                 startActivity(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
@@ -347,22 +415,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-
     private void stopMockLocation() {
         try {
             isProcessRunning = false;
-            locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, false);
-            locationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
-        } catch (Exception ignored) {}
+            if (mockRunnable != null) mockHandler.removeCallbacks(mockRunnable);
+            try { locationManager.setTestProviderEnabled(LocationManager.GPS_PROVIDER, false); } catch (Exception ignored) {}
+            try {
+                if (locationManager.getProvider(LocationManager.GPS_PROVIDER) != null) {
+                    locationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
+                }
+            } catch (Exception ignored) {}
+            updateProcessButtonText();
+        } catch (Exception e) {
+            Log.e(TAG, "stopMockLocation", e);
+        }
     }
 
-
+    // ------------------------ Radar animation fixes ------------------------
     private void startRadarAnimation() {
-        ValueAnimator anim = ValueAnimator.ofFloat(0f, 360f);
-        anim.setDuration(18000);
-        anim.setRepeatCount(ValueAnimator.INFINITE);
-        anim.addUpdateListener(a -> radarView.setRotation((Float) a.getAnimatedValue()));
-        anim.start();
+        // safe: empty for now
+    }
+    private void stopRadarAnimation() {
+        // safe: empty
     }
 
     private void requestLocationPermission() {
@@ -375,25 +449,37 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == LOCATION_PERMISSION_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            getCurrentLocation();
+        try {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            if (requestCode == LOCATION_PERMISSION_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocation();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "onRequestPermissionsResult", e);
         }
     }
 
     private void getCurrentLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) return;
+        try {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) return;
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
-            if (location != null) {
-                currentLat = location.getLatitude();
-                currentLng = location.getLongitude();
-                tvCurrent.setText(String.format(Locale.US, "فعلی: %.6f, %.6f", currentLat, currentLng));
-                tvAccuracy.setText("دقت: " + (int) location.getAccuracy() + " متر");
-                tvSpeed.setText("سرعت: " + String.format("%.1f", location.getSpeed() * 3.6) + " km/h");
-                getAddress(currentLat, currentLng, tvCurrentAddress);
-            }
-        });
+            fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+                try {
+                    if (location != null) {
+                        currentLat = location.getLatitude();
+                        currentLng = location.getLongitude();
+                        tvCurrent.setText(String.format(Locale.US, "فعلی: %.6f, %.6f", currentLat, currentLng));
+                        tvAccuracy.setText("دقت: " + (int) location.getAccuracy() + " متر");
+                        tvSpeed.setText("سرعت: " + String.format("%.1f", location.getSpeed() * 3.6) + " km/h");
+                        getAddress(currentLat, currentLng, tvCurrentAddress);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "getLastLocation callback", e);
+                }
+            }).addOnFailureListener(e -> Log.e(TAG, "getLastLocation failure", e));
+        } catch (Exception e) {
+            Log.e(TAG, "getCurrentLocation", e);
+        }
     }
 
     private void getAddress(double lat, double lng, TextView tv) {
@@ -401,8 +487,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             try {
                 Geocoder geocoder = new Geocoder(this, Locale.getDefault());
                 List<Address> list = geocoder.getFromLocation(lat, lng, 1);
-                runOnUiThread(() -> tv.setText(list != null && !list.isEmpty() ? list.get(0).getAddressLine(0) : "آدرس ناموجود"));
+                runOnUiThread(() -> {
+                    try { tv.setText(list != null && !list.isEmpty() ? list.get(0).getAddressLine(0) : "آدرس ناموجود"); }
+                    catch (Exception e) { tv.setText("آدرس ناموجود"); }
+                });
             } catch (Exception e) {
+                Log.e(TAG, "geocoder error", e);
                 runOnUiThread(() -> tv.setText("آدرس ناموجود (اینترنت لازم نیست)"));
             }
         }).start();
@@ -410,10 +500,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_PRESSURE) {
-            float pressure = event.values[0];
-            float altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure);
-            tvAltitude.setText(String.format(Locale.US, "ارتفاع: %.1f متر", altitude));
+        try {
+            if (event.sensor.getType() == Sensor.TYPE_PRESSURE) {
+                float pressure = event.values[0];
+                float altitude = SensorManager.getAltitude(SensorManager.PRESSURE_STANDARD_ATMOSPHERE, pressure);
+                tvAltitude.setText(String.format(Locale.US, "ارتفاع: %.1f متر", altitude));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "onSensorChanged", e);
         }
     }
 
@@ -423,26 +517,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        if (pressureSensor != null) sensorManager.registerListener(this, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        try { if (pressureSensor != null) sensorManager.registerListener(this, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL); }
+        catch (Exception e) { Log.e(TAG, "onResume sensor register", e); }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
+        try { sensorManager.unregisterListener(this); }
+        catch (Exception e) { Log.e(TAG, "onPause sensor unregister", e); }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        moveTaskToBack(true);
     }
 
     @Override
     protected void onDestroy() {
-        if (isFinishing()) {
-            stopMockLocation();
-        }
+        stopMockLocation();
+        stopRadarAnimation();
         super.onDestroy();
     }
 }
